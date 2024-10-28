@@ -12,7 +12,8 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<38]
+  # Skip s390x as it's optional and fails some tests
+  skip: true  # [py<38 or s390x]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
       
 requirements:
@@ -35,6 +36,7 @@ test:
   source_files:
     - tests
     - msgspec/_core.c
+    - setup.cfg
   commands:
     - pip check
     - pytest
