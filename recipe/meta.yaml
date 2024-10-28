@@ -6,52 +6,38 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: a59fc3b4fcdb972d09138cb516dbde600c99d07c38fd9372a6ef500d2d031b4e
+  # Use GH to include upstream tests
+  url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  sha256: 5bff8c3f9303eb589516e02de4141ce31be09a0fdf4980734b020b64c120295e
 
 build:
   number: 0
+  skip: true  # [py<38]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+      
+requirements:
+  build:
+    - {{ compiler('c') }}
+  host:
+    - python
+    - pip
+    - setuptools
+    - wheel
+  run:
+    - python
 
-outputs:
-  - name: msgspec
-    version: {{ version }}
-    build:
-      skip: true  # [py<38]
-      script: python -m pip install . -vv
-    requirements:
-      build:
-        - python                                 # [build_platform != target_platform]
-        - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-        - {{ compiler('c') }}
-      host:
-        - python
-        - pip
-      run:
-        - python
-    test:
-      imports:
-        - msgspec
-
-  - name: msgspec-yaml
-    version: {{ version }}
-    requirements:
-      run:
-        - {{ pin_subpackage(name) }}
-        - pyyaml
-    test:
-      imports:
-        - msgspec
-
-  - name: msgspec-toml
-    version: {{ version }}
-    requirements:
-      run:
-        - {{ pin_subpackage(name) }}
-        - tomli    # [py<311]
-        - tomli-w
-    test:
-      imports:
-        - msgspec
+test:
+  imports:
+    - msgspec
+  requires:
+    - pip
+    - pytest
+  source_files:
+    - tests
+    - msgspec/_core.c
+  commands:
+    - pip check
+    - pytest
 
 about:
   home: https://jcristharif.com/msgspec/
