@@ -8,7 +8,7 @@ package:
 
 source:
   # Use GH to include upstream tests
-  url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  url: https://github.com/jcrist/{{ name_base }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: 5bff8c3f9303eb589516e02de4141ce31be09a0fdf4980734b020b64c120295e
 
 build:
