@@ -12,34 +12,79 @@ source:
 
 build:
   number: 0
-  # Skip s390x as it's optional and fails some tests
-  skip: true  # [py<38 or s390x]
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
-      
-requirements:
-  build:
-    - {{ compiler('c') }}
-  host:
-    - python
-    - pip
-    - setuptools
-    - wheel
-  run:
-    - python
 
-test:
-  imports:
-    - msgspec
-  requires:
-    - pip
-    - pytest
-  source_files:
-    - tests
-    - msgspec/_core.c
-    - setup.cfg
-  commands:
-    - pip check
-    - pytest tests
+outputs:
+  - name: msgspec
+    version: {{ version }}
+    build:
+      # Skip s390x as it's optional and fails some tests
+      skip: true  # [py<38 or s390x]
+      script: python -m pip install . --no-deps --no-build-isolation -vv
+    requirements:
+      build:
+        - {{ compiler('c') }}
+      host:
+        - python
+        - pip
+        - setuptools
+        - wheel
+      run:
+        - python
+    test:
+      imports:
+        - msgspec
+      requires:
+        - pip
+        - pytest
+      source_files:
+        - tests
+        - msgspec/_core.c
+        - setup.cfg
+      commands:
+        - pip check
+        - pytest tests
+
+  - name: msgspec-yaml
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage(name) }}
+        - pyyaml
+    test:
+      imports:
+        - msgspec
+      requires:
+        - pip
+        - pytest
+      source_files:
+        - tests
+        - msgspec/_core.c
+        - setup.cfg
+      commands:
+        - pip check
+        - pytest tests
+
+  - name: msgspec-toml
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage(name) }}
+        - tomli    # [py<311]
+        - tomli-w
+    test:
+      imports:
+        - msgspec
+      requires:
+        - pip
+        - pytest
+      source_files:
+        - tests
+        - msgspec/_core.c
+        - setup.cfg
+      commands:
+        - pip check
+        - pytest tests
+
 
 about:
   home: https://jcristharif.com/msgspec/
