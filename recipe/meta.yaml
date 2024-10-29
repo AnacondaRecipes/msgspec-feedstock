@@ -39,7 +39,7 @@ test:
     - setup.cfg
   commands:
     - pip check
-    - pytest
+    - pytest tests
 
 about:
   home: https://jcristharif.com/msgspec/
