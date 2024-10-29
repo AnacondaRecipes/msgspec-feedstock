@@ -13,6 +13,8 @@ source:
 
 build:
   number: 0
+  # Skip s390x as it's optional and fails some tests
+  skip: true  # [py<38 or s390x]
 requirements:
   host:
     - python
@@ -21,8 +23,6 @@ outputs:
   - name: {{ name_base }}
     version: {{ version }}
     build:
-      # Skip s390x as it's optional and fails some tests
-      skip: true  # [py<38 or s390x]
       script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
     requirements:
       build:
