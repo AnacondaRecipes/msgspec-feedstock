@@ -19,7 +19,7 @@ requirements:
     - python
 
 outputs:
-  - name: {{ name_base }}
+  - name: {{ name }}
     version: {{ version }}
     build:
       script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
