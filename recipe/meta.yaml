@@ -47,7 +47,7 @@ outputs:
         - pip check
         - pytest tests
 
-  - name: msgspec-yaml
+  - name: {{ name }}-yaml
     version: {{ version }}
     requirements:
       host:
