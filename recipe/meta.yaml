@@ -77,7 +77,7 @@ outputs:
         - python
       run:
         - python
-        - {{ pin_subpackage(name_base) }}
+        - {{ pin_subpackage(name) }}
         - tomli    # [py<311]
         - tomli-w
     test:
