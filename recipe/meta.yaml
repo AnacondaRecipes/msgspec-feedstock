@@ -70,7 +70,7 @@ outputs:
         - pip check
         - pytest tests
 
-  - name: msgspec-toml
+  - name: {{ name }}-toml
     version: {{ version }}
     requirements:
       host:
