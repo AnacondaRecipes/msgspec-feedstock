@@ -3,7 +3,7 @@
 {% set name_base = "msgspec" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name|lower }}-suite
   version: {{ version }}
 
 source:
