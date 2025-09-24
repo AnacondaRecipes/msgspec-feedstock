@@ -24,6 +24,7 @@ outputs:
       script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
       host:
         - python
@@ -95,7 +96,7 @@ outputs:
 
 
 about:
-  home: https://jcristharif.com/msgspec/
+  home: https://jcristharif.com/msgspec
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
@@ -107,7 +108,7 @@ about:
     supporting JSON, MessagePack, YAML, and TOML. It integrates well with
     Python's type annotations, providing ergonomic (and performant!) schema
     validation.
-  doc_url: https://jcristharif.com/msgspec/
+  doc_url: https://jcristharif.com/msgspec
   dev_url: https://github.com/jcrist/msgspec
 
 extra:
