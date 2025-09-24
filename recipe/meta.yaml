@@ -11,9 +11,8 @@ source:
   sha256: 5bff8c3f9303eb589516e02de4141ce31be09a0fdf4980734b020b64c120295e
 
 build:
-  number: 0
-  # Skip s390x as it's optional and fails some tests
-  skip: true  # [py<38 or s390x]
+  number: 1
+  skip: true  # [py<38]
 requirements:
   host:
     - python
