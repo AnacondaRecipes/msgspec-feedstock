@@ -24,7 +24,7 @@ outputs:
       script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
     requirements:
       build:
-        # - {{ stdlib('c') }}
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
       host:
         - python
