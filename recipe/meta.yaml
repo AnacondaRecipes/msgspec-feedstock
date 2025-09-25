@@ -20,8 +20,8 @@ requirements:
 outputs:
   - name: {{ name }}
     version: {{ version }}
-    build:
-      script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+    script: build_msgspec.bat  # [win]
+    script: build_msgspec.sh   # [not win]
     requirements:
       build:
         - {{ stdlib('c') }}
