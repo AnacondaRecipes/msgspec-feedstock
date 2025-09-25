@@ -1,5 +1,5 @@
 {% set name = "msgspec" %}
-{% set version = "0.18.6" %}
+{% set version = "0.19.0" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -8,12 +8,11 @@ package:
 source:
   # Use GH to include upstream tests
   url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 5bff8c3f9303eb589516e02de4141ce31be09a0fdf4980734b020b64c120295e
+  sha256: 33961077a37830c54fa3108bd226a9d7a09b91ff82ef7b976a371039b54b6bc7
 
 build:
   number: 0
-  # Skip s390x as it's optional and fails some tests
-  skip: true  # [py<38 or s390x]
+  skip: true  # [py<39]
 requirements:
   host:
     - python
@@ -21,16 +20,16 @@ requirements:
 outputs:
   - name: {{ name }}
     version: {{ version }}
-    build:
-      script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+    script: build_msgspec.bat  # [win]
+    script: build_msgspec.sh   # [not win]
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
       host:
         - python
         - pip
         - setuptools
-        - wheel
       run:
         - python
     test:
@@ -96,7 +95,7 @@ outputs:
 
 
 about:
-  home: https://jcristharif.com/msgspec/
+  home: https://jcristharif.com/msgspec
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
@@ -108,7 +107,7 @@ about:
     supporting JSON, MessagePack, YAML, and TOML. It integrates well with
     Python's type annotations, providing ergonomic (and performant!) schema
     validation.
-  doc_url: https://jcristharif.com/msgspec/
+  doc_url: https://jcristharif.com/msgspec
   dev_url: https://github.com/jcrist/msgspec
 
 extra:
