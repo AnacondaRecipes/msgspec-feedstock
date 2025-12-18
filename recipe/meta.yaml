@@ -40,8 +40,9 @@ outputs:
     # ERROR tests/prof/perf - ModuleNotFoundError: No module named 'benchmarks'
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/prof" %}
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
-    # tests/unit/test_JSONTestSuite.py::test_invalid[16] Windows fatal exception: stack overflow
-    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/unit/test_JSONTestSuite.py" %}  # [win and (py==310 or py==311)]
+
+    # Skiping tests [not (win and py==310) and not (win and py==311)]
+    # Windows fatal exception: stack overflow. To many tests to skip one by one
 
     test:
       imports:
@@ -61,7 +62,7 @@ outputs:
         - pyproject.toml
       commands:
         - pip check
-        - pytest -ra -v {{ ignore_tests_files }} tests
+        - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
   - name: {{ name }}-yaml
     version: {{ version }}
@@ -90,7 +91,7 @@ outputs:
         - pyproject.toml
       commands:
         - pip check
-        - pytest -ra -v {{ ignore_tests_files }} tests
+        - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
   - name: {{ name }}-toml
     version: {{ version }}
@@ -120,7 +121,7 @@ outputs:
         - pyproject.toml
       commands:
         - pip check
-        - pytest -ra -v {{ ignore_tests_files }} tests
+        - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
 about:
   home: https://jcristharif.com/msgspec
