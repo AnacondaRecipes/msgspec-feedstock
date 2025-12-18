@@ -1,5 +1,5 @@
 {% set name = "msgspec" %}
-{% set version = "0.19.0" %}
+{% set version = "0.20.0" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -8,7 +8,7 @@ package:
 source:
   # Use GH to include upstream tests
   url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 33961077a37830c54fa3108bd226a9d7a09b91ff82ef7b976a371039b54b6bc7
+  sha256: fd1f5aa07501516720bfaa3f7cbcb7170a0b944d3f49ee107caf0fa56d056d9c
 
 build:
   number: 0
@@ -30,21 +30,34 @@ outputs:
         - python
         - pip
         - setuptools
+        - wheel
       run:
         - python
+
+    {% set ignore_tests_files = "" %}
+    # ERROR tests/prof/perf - ModuleNotFoundError: No module named 'benchmarks'
+    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/prof" %}
+    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
+
     test:
       imports:
         - msgspec
       requires:
         - pip
         - pytest
+        - mypy
+        - attrs
+        - pyyaml
+        - tomli    # [py<311]
+        - tomli-w
+        - msgpack-python
       source_files:
         - tests
-        - msgspec/_core.c
-        - setup.cfg
+        - src/msgspec/_core.c
+        - pyproject.toml
       commands:
         - pip check
-        - pytest tests
+        - pytest -ra -v {{ ignore_tests_files }} tests
 
   - name: {{ name }}-yaml
     version: {{ version }}
@@ -61,13 +74,19 @@ outputs:
       requires:
         - pip
         - pytest
+        - mypy
+        - attrs
+        - pyyaml
+        - tomli    # [py<311]
+        - tomli-w
+        - msgpack-python
       source_files:
         - tests
-        - msgspec/_core.c
-        - setup.cfg
+        - src/msgspec/_core.c
+        - pyproject.toml
       commands:
         - pip check
-        - pytest tests
+        - pytest -ra -v {{ ignore_tests_files }} tests
 
   - name: {{ name }}-toml
     version: {{ version }}
@@ -85,14 +104,19 @@ outputs:
       requires:
         - pip
         - pytest
+        - mypy
+        - attrs
+        - pyyaml
+        - tomli    # [py<311]
+        - tomli-w
+        - msgpack-python
       source_files:
         - tests
-        - msgspec/_core.c
-        - setup.cfg
+        - src/msgspec/_core.c
+        - pyproject.toml
       commands:
         - pip check
-        - pytest tests
-
+        - pytest -ra -v {{ ignore_tests_files }} tests
 
 about:
   home: https://jcristharif.com/msgspec
