@@ -9,6 +9,8 @@ source:
   # Use GH to include upstream tests
   url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: fd1f5aa07501516720bfaa3f7cbcb7170a0b944d3f49ee107caf0fa56d056d9c
+  patches:
+    - no-stdatomic-when-gil.patch  # [win]
 
 build:
   number: 0

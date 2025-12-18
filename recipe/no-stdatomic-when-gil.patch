@@ -1,0 +1,14 @@
+diff --git a/src/msgspec/_core.c b/src/msgspec/_core.c
+index d4151cd..232c063 100644
+--- a/src/msgspec/_core.c
++++ b/src/msgspec/_core.c
+@@ -4,7 +4,9 @@
+ #include <stdbool.h>
+ #include <limits.h>
+ #include <float.h>
++#ifdef Py_GIL_DISABLED
+ #include <stdatomic.h>
++#endif
+ 
+ #define PY_SSIZE_T_CLEAN
+ #include "Python.h"
