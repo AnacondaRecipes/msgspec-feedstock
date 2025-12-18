@@ -1,3 +1,6 @@
+# MSVC atomic is not supported in msvc 2019
+# TODO: remove this patch as soon as msvc 2022 will be available
+
 diff --git a/src/msgspec/_core.c b/src/msgspec/_core.c
 index d4151cd..232c063 100644
 --- a/src/msgspec/_core.c

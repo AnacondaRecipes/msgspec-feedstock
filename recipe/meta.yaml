@@ -40,6 +40,8 @@ outputs:
     # ERROR tests/prof/perf - ModuleNotFoundError: No module named 'benchmarks'
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/prof" %}
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
+    # tests/unit/test_JSONTestSuite.py::test_invalid[16] Windows fatal exception: stack overflow
+    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/unit/test_JSONTestSuite.py" %}  # [win and (py==310 or py==311)]
 
     test:
       imports:
