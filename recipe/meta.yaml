@@ -1,5 +1,5 @@
 {% set name = "msgspec" %}
-{% set version = "0.19.0" %}
+{% set version = "0.20.0" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -8,11 +8,12 @@ package:
 source:
   # Use GH to include upstream tests
   url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 33961077a37830c54fa3108bd226a9d7a09b91ff82ef7b976a371039b54b6bc7
+  sha256: fd1f5aa07501516720bfaa3f7cbcb7170a0b944d3f49ee107caf0fa56d056d9c
 
 build:
   number: 0
   skip: true  # [py<39]
+
 requirements:
   host:
     - python
@@ -21,7 +22,7 @@ outputs:
   - name: {{ name }}
     version: {{ version }}
     script: build_msgspec.bat  # [win]
-    script: build_msgspec.sh   # [not win]
+    script: build_msgspec.sh  # [not win]
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -29,7 +30,8 @@ outputs:
       host:
         - python
         - pip
-        - setuptools
+        - setuptools >=80
+        - setuptools-scm >=8
       run:
         - python
     test:
@@ -38,13 +40,23 @@ outputs:
       requires:
         - pip
         - pytest
+        - pyyaml
+        - msgpack-python
+        - attrs
+        - eval-type-backport  # [py<310]
+        - tomli  # [py<311]
+        - tomli-w
       source_files:
         - tests
-        - msgspec/_core.c
-        - setup.cfg
+        # benchmarks are here for running the tests suite.
+        - benchmarks
+        - src/msgspec/_core.c
       commands:
         - pip check
-        - pytest tests
+        - python -c "from importlib.metadata import version; print(version('{{ name }}'))"
+        - python -c "from importlib.metadata import version; assert '{{ version }}' == version('{{ name }}')"
+        # Skip test_encode and test_decode because the "fixture 'benchmark' is not found".
+        - pytest tests --ignore=tests/typing/test_mypy.py --ignore=tests/typing/test_pyright.py -k "not (test_encode or test_decode)"
 
   - name: {{ name }}-yaml
     version: {{ version }}
@@ -60,14 +72,8 @@ outputs:
         - msgspec
       requires:
         - pip
-        - pytest
-      source_files:
-        - tests
-        - msgspec/_core.c
-        - setup.cfg
       commands:
         - pip check
-        - pytest tests
 
   - name: {{ name }}-toml
     version: {{ version }}
@@ -77,22 +83,15 @@ outputs:
       run:
         - python
         - {{ pin_subpackage(name) }}
-        - tomli    # [py<311]
+        - tomli  # [py<311]
         - tomli-w
     test:
       imports:
         - msgspec
       requires:
         - pip
-        - pytest
-      source_files:
-        - tests
-        - msgspec/_core.c
-        - setup.cfg
       commands:
         - pip check
-        - pytest tests
-
 
 about:
   home: https://jcristharif.com/msgspec
