@@ -31,8 +31,8 @@ outputs:
       host:
         - python
         - pip
-        - setuptools
-        - wheel
+        - setuptools >=80
+        - setuptools-scm >=8
       run:
         - python
 
@@ -40,9 +40,6 @@ outputs:
     # ERROR tests/prof/perf - ModuleNotFoundError: No module named 'benchmarks'
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/prof" %}
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
-
-    # Skiping tests [not (win and py==310) and not (win and py==311)]
-    # Windows fatal exception: stack overflow. To many tests to skip one by one
 
     test:
       imports:
@@ -62,6 +59,8 @@ outputs:
         - pyproject.toml
       commands:
         - pip check
+          # Skiping tests [not (win and py==310) and not (win and py==311)]
+          # Windows fatal exception: stack overflow. To many tests to skip one by one
         - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
   - name: {{ name }}-yaml
@@ -73,25 +72,6 @@ outputs:
         - python
         - {{ pin_subpackage(name) }}
         - pyyaml
-    test:
-      imports:
-        - msgspec
-      requires:
-        - pip
-        - pytest
-        - mypy
-        - attrs
-        - pyyaml
-        - tomli    # [py<311]
-        - tomli-w
-        - msgpack-python
-      source_files:
-        - tests
-        - src/msgspec/_core.c
-        - pyproject.toml
-      commands:
-        - pip check
-        - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
   - name: {{ name }}-toml
     version: {{ version }}
@@ -103,25 +83,6 @@ outputs:
         - {{ pin_subpackage(name) }}
         - tomli    # [py<311]
         - tomli-w
-    test:
-      imports:
-        - msgspec
-      requires:
-        - pip
-        - pytest
-        - mypy
-        - attrs
-        - pyyaml
-        - tomli    # [py<311]
-        - tomli-w
-        - msgpack-python
-      source_files:
-        - tests
-        - src/msgspec/_core.c
-        - pyproject.toml
-      commands:
-        - pip check
-        - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
 about:
   home: https://jcristharif.com/msgspec
