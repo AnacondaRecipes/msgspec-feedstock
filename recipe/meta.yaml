@@ -37,16 +37,21 @@ outputs:
         - python
 
     {% set ignore_tests_files = "" %}
-    # ERROR tests/prof/perf - ModuleNotFoundError: No module named 'benchmarks'
-    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/prof" %}
+    # ModuleNotFoundError: No module named 'pyright'
     {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
+
+    {% set ignore_tests = "_test_stab" %}
+    # ValueError: no option named '--calibrate'
+    {% set ignore_tests = ignore_tests + " or test_encode or test_decode" %}
 
     test:
       imports:
-        - msgspec
+        - {{ name }}
       requires:
         - pip
         - pytest
+        - testfixtures
+        - pytest-benchmark
         - mypy
         - attrs
         - pyyaml
@@ -57,11 +62,12 @@ outputs:
         - tests
         - src/msgspec/_core.c
         - pyproject.toml
+        - benchmarks
       commands:
         - pip check
           # Skiping tests [not (win and py==310) and not (win and py==311)]
           # Windows fatal exception: stack overflow. To many tests to skip one by one
-        - pytest -ra -v {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
+        - pytest -ra -v -k "not ({{ ignore_tests }})" {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
   - name: {{ name }}-yaml
     version: {{ version }}
@@ -72,6 +78,10 @@ outputs:
         - python
         - {{ pin_subpackage(name) }}
         - pyyaml
+    test:
+      imports:
+        - msgspec
+        - msgspec.yaml
 
   - name: {{ name }}-toml
     version: {{ version }}
@@ -83,6 +93,10 @@ outputs:
         - {{ pin_subpackage(name) }}
         - tomli    # [py<311]
         - tomli-w
+    test:
+      imports:
+        - msgspec
+        - msgspec.toml
 
 about:
   home: https://jcristharif.com/msgspec
