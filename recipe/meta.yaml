@@ -1,5 +1,5 @@
 {% set name = "msgspec" %}
-{% set version = "0.19.0" %}
+{% set version = "0.20.0" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -8,7 +8,9 @@ package:
 source:
   # Use GH to include upstream tests
   url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 33961077a37830c54fa3108bd226a9d7a09b91ff82ef7b976a371039b54b6bc7
+  sha256: fd1f5aa07501516720bfaa3f7cbcb7170a0b944d3f49ee107caf0fa56d056d9c
+  patches:
+    - no-stdatomic-when-gil.patch  # [win]
 
 build:
   number: 0
@@ -29,22 +31,43 @@ outputs:
       host:
         - python
         - pip
-        - setuptools
+        - setuptools >=80
+        - setuptools-scm >=8
       run:
         - python
+
+    {% set ignore_tests_files = "" %}
+    # ModuleNotFoundError: No module named 'pyright'
+    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
+
+    {% set ignore_tests = "_test_stab" %}
+    # ValueError: no option named '--calibrate'
+    {% set ignore_tests = ignore_tests + " or test_encode or test_decode" %}
+
     test:
       imports:
-        - msgspec
+        - {{ name }}
       requires:
         - pip
         - pytest
+        - testfixtures
+        - pytest-benchmark
+        - mypy
+        - attrs
+        - pyyaml
+        - tomli    # [py<311]
+        - tomli-w
+        - msgpack-python
       source_files:
         - tests
-        - msgspec/_core.c
-        - setup.cfg
+        - src/msgspec/_core.c
+        - pyproject.toml
+        - benchmarks
       commands:
         - pip check
-        - pytest tests
+          # Skiping tests [not (win and py==310) and not (win and py==311)]
+          # Windows fatal exception: stack overflow. To many tests to skip one by one
+        - pytest -ra -v -k "not ({{ ignore_tests }})" {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
 
   - name: {{ name }}-yaml
     version: {{ version }}
@@ -58,16 +81,7 @@ outputs:
     test:
       imports:
         - msgspec
-      requires:
-        - pip
-        - pytest
-      source_files:
-        - tests
-        - msgspec/_core.c
-        - setup.cfg
-      commands:
-        - pip check
-        - pytest tests
+        - msgspec.yaml
 
   - name: {{ name }}-toml
     version: {{ version }}
@@ -82,17 +96,7 @@ outputs:
     test:
       imports:
         - msgspec
-      requires:
-        - pip
-        - pytest
-      source_files:
-        - tests
-        - msgspec/_core.c
-        - setup.cfg
-      commands:
-        - pip check
-        - pytest tests
-
+        - msgspec.toml
 
 about:
   home: https://jcristharif.com/msgspec
