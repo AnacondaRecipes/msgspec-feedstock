@@ -7,7 +7,6 @@ upstream_sources:
       from_pattern: ^v?(\d+(?:\.\d+)*.*)$
       to_pattern: \1
     packages:
-      - msgspec-suite
       - msgspec
       - msgspec-yaml
       - msgspec-toml
