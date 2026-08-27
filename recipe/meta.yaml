@@ -49,7 +49,7 @@ outputs:
         - {{ name }}
       requires:
         - pip
-        - pytest
+        - pytest >=9
         - testfixtures
         - pytest-benchmark
         - mypy
