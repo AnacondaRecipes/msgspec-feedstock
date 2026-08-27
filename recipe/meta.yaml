@@ -1,9 +1,5 @@
 {% set name = "msgspec" %}
 {% set version = "0.21.1" %}
-{% set ignore_tests_files = "" %}
-{% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
-{% set ignore_tests = "_test_stab" %}
-{% set ignore_tests = ignore_tests + " or test_encode or test_decode" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -18,8 +14,7 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<39]
-
+  skip: true  # [py<310]
 requirements:
   host:
     - python
@@ -28,7 +23,7 @@ outputs:
   - name: {{ name }}
     version: {{ version }}
     script: build_msgspec.bat  # [win]
-    script: build_msgspec.sh  # [not win]
+    script: build_msgspec.sh   # [not win]
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -40,8 +35,15 @@ outputs:
         - setuptools-scm >=8
       run:
         - python
+
+    {% set ignore_tests_files = "" %}
     # ModuleNotFoundError: No module named 'pyright'
+    {% set ignore_tests_files = ignore_tests_files + " --ignore=tests/typing/test_pyright.py" %}
+
+    {% set ignore_tests = "_test_stab" %}
     # ValueError: no option named '--calibrate'
+    {% set ignore_tests = ignore_tests + " or test_encode or test_decode" %}
+
     test:
       imports:
         - {{ name }}
@@ -53,7 +55,7 @@ outputs:
         - mypy
         - attrs
         - pyyaml
-        - tomli  # [py<311]
+        - tomli    # [py<311]
         - tomli-w
         - msgpack-python
       source_files:
@@ -62,10 +64,11 @@ outputs:
         - pyproject.toml
         - benchmarks
       commands:
-        - pip check:
-            # Skiping tests [not (win and py==310) and not (win and py==311)]
-            # Windows fatal exception: stack overflow. To many tests to skip one by one
+        - pip check
+          # Skiping tests [not (win and py==310) and not (win and py==311)]
+          # Windows fatal exception: stack overflow. To many tests to skip one by one
         - pytest -ra -v -k "not ({{ ignore_tests }})" {{ ignore_tests_files }} tests  # [not (win and py==310) and not (win and py==311)]
+
   - name: {{ name }}-yaml
     version: {{ version }}
     requirements:
@@ -79,6 +82,7 @@ outputs:
       imports:
         - msgspec
         - msgspec.yaml
+
   - name: {{ name }}-toml
     version: {{ version }}
     requirements:
@@ -87,7 +91,7 @@ outputs:
       run:
         - python
         - {{ pin_subpackage(name) }}
-        - tomli  # [py<311]
+        - tomli    # [py<311]
         - tomli-w
     test:
       imports:
