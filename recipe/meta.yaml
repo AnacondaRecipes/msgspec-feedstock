@@ -1,5 +1,5 @@
 {% set name = "msgspec" %}
-{% set version = "0.20.0" %}
+{% set version = "0.21.1" %}
 
 package:
   name: {{ name|lower }}-suite
@@ -8,13 +8,13 @@ package:
 source:
   # Use GH to include upstream tests
   url: https://github.com/jcrist/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: fd1f5aa07501516720bfaa3f7cbcb7170a0b944d3f49ee107caf0fa56d056d9c
+  sha256: e0d7fbf42256efcd848c5b85c069a450e06d8ed8eaf740807143257beb00f716
   patches:
     - no-stdatomic-when-gil.patch  # [win]
 
 build:
   number: 0
-  skip: true  # [py<39]
+  skip: true  # [py<310]
 requirements:
   host:
     - python
@@ -49,7 +49,7 @@ outputs:
         - {{ name }}
       requires:
         - pip
-        - pytest
+        - pytest >=9
         - testfixtures
         - pytest-benchmark
         - mypy
